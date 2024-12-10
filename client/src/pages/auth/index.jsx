@@ -58,6 +58,9 @@ function Auth() {
             </Tabs>
           </div>
         </div>
+        <div className="hidden xl:flex justify-center items-center">
+            <img src={Background} alt="backgroud-image" className="h-[700px]" />
+          </div>
       </div>
     </div>
   );
