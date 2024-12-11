@@ -3,13 +3,51 @@ import Victory from "@/assets/victory.svg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { notify_error, notify_success } from "@/utils/notifications";
 import { useState } from "react";
+import { toast } from "sonner";
 
 function Auth() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setconfirmPassword] = useState("");
+
+    const validateSignup = () => {
+      if(!email.length){
+        notify_error("Email is required.")
+        return false;
+      }
+
+      if(!password.length){
+        notify_error("Password is required.")
+        return false;
+      }
+
+      if(!confirmPassword.length){
+        notify_error("Confirm Password is required.")
+        return false;
+      }
+      
+
+      if(password !== confirmPassword){
+        notify_error("Password and Confirm Password is should be same.")
+        return false;
+      }
+
+      return true;
+    }
+    const handleSignup = async () => {
+
+      if(validateSignup()){
+        notify_success("Done")
+      }
+
+    };
+
+    const handleLogin = async () => {
+
+    };
 
   return (
     <div className="h-[100vh] w-[100vw] flex items-center justify-center">
@@ -52,7 +90,7 @@ function Auth() {
                 <Input placeholder="Email" type="email" className="rounded-full p-6" value={email} onChange={e => setEmail(e.target.value)} />
                 <Input placeholder="Password" type="password" className="rounded-full p-6" value={password} onChange={e => setPassword(e.target.value)} />
                 <Input placeholder="Confirm Password" type="password" className="rounded-full p-6" value={confirmPassword} onChange={e => setconfirmPassword(e.target.value)} />
-                <Button className="rounded-full p-6">Sign Up</Button>
+                <Button className="rounded-full p-6" onClick={() => handleSignup()}>Sign Up</Button>
               </TabsContent>
 
             </Tabs>
