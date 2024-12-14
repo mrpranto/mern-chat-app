@@ -1,6 +1,6 @@
+import { validateResult } from "../helpers/ValidationHelper.js";
 import User from "../models/User.model.js";
 import jwt from "jsonwebtoken";
-import { signupValidationResult } from "../request/SignupRequest.js";
 
 const maxAge = 3 * 24 * 60 * 60 * 1000;
 
@@ -12,7 +12,7 @@ export const signup = async (req, res, next) => {
 
     try{
 
-        signupValidationResult(req, res);
+        validateResult(req);
 
         const {email, password} = req.body;
         
@@ -29,8 +29,11 @@ export const signup = async (req, res, next) => {
         })
 
     }catch(err){
-        console.log(err);
-        return res.status(500).send("Internal Server Error!")
+       
+        return res.status(err.statusCode).send({
+            message: err.message,
+            errors: err.errors
+        })
     }
 
 }

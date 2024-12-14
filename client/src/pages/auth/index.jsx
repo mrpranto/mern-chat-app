@@ -3,6 +3,8 @@ import Victory from "@/assets/victory.svg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import apiClient from "@/lib/api-client";
+import { SIGNUP_ROUTE } from "@/utils/constants";
 import { notify_error, notify_success } from "@/utils/notifications";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -40,7 +42,8 @@ function Auth() {
     const handleSignup = async () => {
 
       if(validateSignup()){
-        notify_success("Done")
+        const response = await apiClient.post(SIGNUP_ROUTE, {email, password});
+        console.log('response');
       }
 
     };
