@@ -32,6 +32,16 @@ export const signupRequest = () => {
       .withMessage("The password field is required.")
       .isLength({ min: 6 })
       .withMessage("The password must be at least 6 characters."),
+
+    body("confirmPassword")
+      .notEmpty()
+      .withMessage("The password field is required.")
+      .custom(async (value, {req}) => {
+        if (value !== req.body.password) {
+          throw new Error("Password and Confirm password is not match.");
+        }
+        return true;
+      }),
   ];
 };
 

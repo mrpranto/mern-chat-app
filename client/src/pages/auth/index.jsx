@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import apiClient from "@/lib/api-client";
-import { SIGNUP_ROUTE } from "@/utils/constants";
+import { SIGNUP_ROUTE, LOGIN_ROUTE } from "@/utils/constants";
 import { notify_error, notify_success } from "@/utils/notifications";
 import { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 function Auth() {
@@ -14,42 +15,52 @@ function Auth() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setconfirmPassword] = useState("");
+    const [user, setUser] = useState(null);
+    const navigate = useNavigate();
 
-    const validateSignup = () => {
-      if(!email.length){
-        notify_error("Email is required.")
-        return false;
-      }
-
-      if(!password.length){
-        notify_error("Password is required.")
-        return false;
-      }
-
-      if(!confirmPassword.length){
-        notify_error("Confirm Password is required.")
-        return false;
-      }
-      
-
-      if(password !== confirmPassword){
-        notify_error("Password and Confirm Password is should be same.")
-        return false;
-      }
-
-      return true;
-    }
+    
     const handleSignup = async () => {
 
-      if(validateSignup()){
-        const response = await apiClient.post(SIGNUP_ROUTE, {email, password});
-        console.log('response');
-      }
+      try{
 
+          const response = await apiClient.post(SIGNUP_ROUTE, {email, password, confirmPassword}, {withCredentials: true});
+          setUser(response.data);
+          
+          if(user && user.profileSetup === true){
+            navigate('/chat');
+          }else{
+            navigate('/profile');
+          }
+
+          notify_success("Your signup successful.")
+
+      }catch(err){
+        notify_error(err.response.data.message);
+        
+        console.error(err);
+      }
     };
 
     const handleLogin = async () => {
 
+        try{
+
+          const response = await apiClient.post(LOGIN_ROUTE, {email, password}, {withCredentials: true});
+          setUser(response.data);
+          
+          if(user && user.profileSetup === true){
+            navigate('/chat');
+          }else{
+            navigate('/profile');
+          }
+
+          notify_success("Your login successful.")
+
+      }catch(err){
+        notify_error(err.response.data.message);
+        
+        console.error(err);
+      }
     };
 
   return (
@@ -83,10 +94,10 @@ function Auth() {
                   Signup
                 </TabsTrigger>
               </TabsList>
-              <TabsContent value="login" className="flex flex-col gap-5 mt-10">
+              <TabsContent value="login"  className="flex flex-col gap-5 mt-10">
                 <Input placeholder="Email" type="email" className="rounded-full p-6" value={email} onChange={e => setEmail(e.target.value)} />
                 <Input placeholder="Password" type="password" className="rounded-full p-6" value={password} onChange={e => setPassword(e.target.value)} />
-                <Button className="rounded-full p-6">Login</Button>
+                <Button className="rounded-full p-6" onClick={() => handleLogin()}>Login</Button>
               </TabsContent>
 
               <TabsContent value="signup" className="flex flex-col gap-5">

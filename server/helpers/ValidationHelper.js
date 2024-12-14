@@ -2,13 +2,14 @@ import { validationResult } from "express-validator";
 
 export const validateResult = (req) => {
     const errors = validationResult(req);    
-
+ 
     if (!errors.isEmpty()) {
       const formattedErrors = errors.array().reduce((acc, error) => {
        
         const { path, msg } = error;
 
         if (!acc[path]) {
+          
           acc[path] = [];
         }
 
@@ -21,6 +22,7 @@ export const validateResult = (req) => {
       const firstElement = Object.keys(formattedErrors)[0];  
 
       const totalError = Object.keys(formattedErrors).length - 1;
+      
       let message;
   
       if (totalError > 1) {
