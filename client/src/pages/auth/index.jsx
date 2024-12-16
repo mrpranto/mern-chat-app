@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import apiClient from "@/lib/api-client";
+import { useAppStore } from "@/store";
 import { SIGNUP_ROUTE, LOGIN_ROUTE } from "@/utils/constants";
 import { notify_error, notify_success } from "@/utils/notifications";
 import { useState } from "react";
@@ -15,7 +16,7 @@ function Auth() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setconfirmPassword] = useState("");
-    const [user, setUser] = useState(null);
+    const {userInfo, setUserInfo} = useAppStore();
     const navigate = useNavigate();
 
     
@@ -24,9 +25,10 @@ function Auth() {
       try{
 
           const response = await apiClient.post(SIGNUP_ROUTE, {email, password, confirmPassword}, {withCredentials: true});
-          setUser(response.data);
           
-          if(user && user.profileSetup === true){
+          setUserInfo(response.data?.user);
+          
+          if(userInfo && userInfo.profileSetup === true){
             navigate('/chat');
           }else{
             navigate('/profile');
@@ -35,7 +37,7 @@ function Auth() {
           notify_success("Your signup successful.")
 
       }catch(err){
-        notify_error(err.response.data.message);
+        notify_error(err?.response?.data?.message);
         
         console.error(err);
       }
@@ -46,9 +48,10 @@ function Auth() {
         try{
 
           const response = await apiClient.post(LOGIN_ROUTE, {email, password}, {withCredentials: true});
-          setUser(response.data);
+                    
+          setUserInfo(response.data?.user);
           
-          if(user && user.profileSetup === true){
+          if(userInfo && userInfo.profileSetup === true){
             navigate('/chat');
           }else{
             navigate('/profile');
@@ -57,10 +60,12 @@ function Auth() {
           notify_success("Your login successful.")
 
       }catch(err){
-        notify_error(err.response.data.message);
+        notify_error(err?.response?.data?.message);
         
         console.error(err);
       }
+
+
     };
 
   return (

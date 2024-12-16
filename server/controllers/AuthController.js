@@ -29,7 +29,7 @@ export const signup = async (req, res, next) => {
       user: {
         email: user.email,
         profileSetup: user.profileSetup,
-        _id: user._id,
+        id: user._id,
       },
     });
   } catch (err) {
@@ -72,7 +72,7 @@ export const login = async (req, res, next) => {
       user: {
         email: user.email,
         profileSetup: user.profileSetup,
-        _id: user._id,
+        id: user._id,
       },
     });
   } catch (err) {
@@ -89,3 +89,37 @@ export const login = async (req, res, next) => {
     });
   }
 };
+
+
+
+
+export const user = async (req, res, next) => {
+  try{
+
+    const user = await User.findById(req.userId);
+    if(!user){
+      return res.status(404).send("User with the given id not found!");
+    }
+
+    return res.status(200).json({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      profileSetup: user.profileSetup,
+      id: user._id,
+    });
+
+  }catch(err){
+    if (err.errors) {
+      return res.status(err.statusCode).send({
+        message: err.message,
+        errors: err.errors,
+      });
+    }
+    console.log(err);
+
+    return res.status(500).send({
+        message: "Internal Server error."
+    });
+  }
+}

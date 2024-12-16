@@ -15,3 +15,11 @@ export const notify_error = (message) => {
          }
      });
  }
+
+ export const notify_warning = (message) => {
+    return toast.warning(message, {
+         action:{
+             label: "X"
+         }
+     });
+ }
