@@ -2,6 +2,7 @@ import { validateResult } from "../helpers/ValidationHelper.js";
 import User from "../models/User.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { request, response } from "express";
 
 const maxAge = 3 * 24 * 60 * 60 * 1000;
 
@@ -106,6 +107,49 @@ export const user = async (req, res, next) => {
       lastName: user.lastName,
       email: user.email,
       profileSetup: user.profileSetup,
+      id: user._id,
+    });
+
+  }catch(err){
+    if (err.errors) {
+      return res.status(err.statusCode).send({
+        message: err.message,
+        errors: err.errors,
+      });
+    }
+    console.log(err);
+
+    return res.status(500).send({
+        message: "Internal Server error."
+    });
+  }
+}
+
+
+
+export const updateProfile = async (req, res, next) => {
+  try{
+
+    validateResult(req);
+
+    const { userId } = req;
+    const { firstName, lastName, color } = req.body;
+
+
+    const user = await User.findByIdAndUpdate(userId, {
+      firstName, lastName, color, profileSetup: true
+    }, {new: true, runValidators: true});
+
+    if(!user){
+      return res.status(404).send("User with the given id not found!");
+    }
+
+    return res.status(200).json({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      profileSetup: user.profileSetup,
+      color: user.color,
       id: user._id,
     });
 

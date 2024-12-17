@@ -1,5 +1,5 @@
 import { useAppStore } from "@/store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoArrowBack } from "react-icons/io5";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -7,6 +7,9 @@ import { colors, getColor } from "@/lib/utils";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import apiClient from "@/lib/api-client";
+import { UPDATE_PROFIE } from "@/utils/constants";
+import { notify_error, notify_success } from "@/utils/notifications";
 
 function Profile() {
   const navigate = useNavigate();
@@ -16,8 +19,31 @@ function Profile() {
   const [image, setImage] = useState(null);
   const [hovered, sethovered] = useState(false);
   const [selectedColor, setselectedColor] = useState(0);
+  const [validationError, setValidationError] = useState({});
 
-  const saveChanges = async () => {};
+  useEffect(() => {
+    setFirstName(userInfo.firstName);
+    setLastName(userInfo.lastName);
+  }, [userInfo])
+  
+
+  const saveChanges = async () => {
+    try{
+      
+      const response = await apiClient.post(UPDATE_PROFIE, 
+        { firstName, lastName, color:selectedColor }, {withCredentials: true});
+
+        if(response.status == 200 && response.data){
+          setUserInfo(response.data);
+          notify_success("Profile update successfully.");
+          navigate("/chat");
+        }
+
+    }catch(err){
+      setValidationError(err?.response?.data?.errors)
+      notify_error(err?.response?.data?.message)
+    }
+  };
 
   return (
     <div className="bg-[#22232c] h-[100vh] w-[100vw] flex items-center justify-center flex-col gap-10">
@@ -78,6 +104,9 @@ function Profile() {
                 value={firstName}
                 className="rounded-lg p-6 bg-[#2c2e3b] border-none"
               />
+              {
+                validationError.firstName ? <p className="text-xs text-red-400 pl-2">{validationError.firstName}</p> : ''
+              }
             </div>
             <div className="w-full">
               <Input
@@ -87,6 +116,10 @@ function Profile() {
                 value={lastName}
                 className="rounded-lg p-6 bg-[#2c2e3b] border-none"
               />
+              {
+                validationError.lastName ? <p className="text-xs text-red-400 pl-2">{validationError.lastName}</p> : ''
+              }
+              
             </div>
             <div className="w-full flex gap-5">
               {colors.map((color, index) => (

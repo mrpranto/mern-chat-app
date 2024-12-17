@@ -3,16 +3,6 @@ import User from "../models/User.model.js";
 
 export const signupRequest = () => {
   return [
-    // body("firstName")
-    //   .notEmpty()
-    //   .isString()
-    //   .withMessage("The First Name field is required."),
-
-    // body("lastName")
-    //   .notEmpty()
-    //   .isString()
-    //   .withMessage("The Last Name field is required."),
-
     body("email")
       .notEmpty()
       .isString()
@@ -67,4 +57,20 @@ export const loginRequest = () => {
       .isLength({ min: 6 })
       .withMessage("The password must be at least 6 characters.")
   ]
-}
+};
+
+export const updateProfileRequest = () => {
+  return [
+    body("firstName")
+    .notEmpty()
+    .withMessage("The First Name field is required.")
+    .isString()
+    .withMessage("The First Name field is required."),
+
+  body("lastName")
+    .notEmpty()
+    .withMessage("The Last Name field is required.")
+    .isString()
+    .withMessage("The Last Name field is required."),
+  ]
+};

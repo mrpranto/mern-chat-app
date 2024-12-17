@@ -21,12 +21,13 @@ export const validateResult = (req) => {
   
       const firstElement = Object.keys(formattedErrors)[0];  
 
-      const totalError = Object.keys(formattedErrors).length - 1;
+      const totalError = Object.keys(formattedErrors).length;
+      
       
       let message;
   
       if (totalError > 1) {
-        message = `${formattedErrors[firstElement][0]} and (${totalError}) more.`;
+        message = `${formattedErrors[firstElement][0]} and (${totalError - 1}) more.`;
       } else {
         message = `${formattedErrors[firstElement][0]}`;
       }
