@@ -65,12 +65,29 @@ export const updateProfileRequest = () => {
     .notEmpty()
     .withMessage("The First Name field is required.")
     .isString()
-    .withMessage("The First Name field is required."),
+    .withMessage("The First Name fiels must me string.")
+    .isLength({ min: 3})
+    .withMessage("The First Name min length 3."),
 
   body("lastName")
     .notEmpty()
     .withMessage("The Last Name field is required.")
     .isString()
-    .withMessage("The Last Name field is required."),
+    .withMessage("The First Name fiels must me string.")
+    .isLength({ min: 1})
+    .withMessage("The Last Name min length 1"),
+  ]
+};
+
+export const updateProfileImageRequest = () => {
+  return [
+    body("image")
+    .notEmpty()
+    .withMessage("The Image field is required.")
+    .isString()
+    .withMessage("The First Name fiels must me string.")
+    .isLength({ min: 3})
+    .withMessage("The First Name min length 3."),
+
   ]
 };
