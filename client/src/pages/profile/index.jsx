@@ -11,6 +11,7 @@ import apiClient from "@/lib/api-client";
 import {
   UPDATE_PROFIE_ROUTE,
   ADD_PROFIE_PICTURE_ROUTE,
+  REMOVE_PROFIE_PICTURE_ROUTE,
   HOST,
 } from "@/utils/constants";
 import {
@@ -38,9 +39,6 @@ function Profile() {
       setImage(`${HOST}/${userInfo.image}`);
     }
   }, [userInfo]);
-
-  console.log(image);
-  
 
   const saveChanges = async () => {
     try {
@@ -104,7 +102,21 @@ function Profile() {
   };
 
   const handleDeletedImage = async () => {
-    setImage(null)
+    try {
+      const response = await apiClient.delete(
+        REMOVE_PROFIE_PICTURE_ROUTE,
+        { withCredentials: true }
+      );
+
+      if (response.status == 200 && response.data) {
+        setUserInfo(response.data);
+        notify_success("Profile Image remove successfully.");
+        setImage(null);
+      }
+    } catch (err) {
+      setValidationError(err?.response?.data?.errors);
+      notify_error(err?.response?.data?.message);
+    }
   };
 
   return (

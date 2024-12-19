@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { request, response } from "express";
 import path from "path";
+import { unlinkSync } from "fs";
 
 const maxAge = 3 * 24 * 60 * 60 * 1000;
 
@@ -223,3 +224,43 @@ export const updateProfileImage = async (req, res) => {
     });
   }
 };
+
+
+
+export const removeProfilePicture  = async(req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).send("User with the given id not found!");
+    }
+
+    if(user.image){
+      unlinkSync(user.image)
+    }
+    user.image = null;
+    
+    await user.save();
+
+    return res.status(200).json({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      color: user.color,
+      profileSetup: user.profileSetup,
+      image: user.image,
+      id: user._id,
+    });
+  } catch (err) {
+    if (err.errors) {
+      return res.status(err.statusCode).send({
+        message: err.message,
+        errors: err.errors,
+      });
+    }
+    console.log(err);
+
+    return res.status(500).send({
+      message: "Internal Server error.",
+    });
+  }
+}
