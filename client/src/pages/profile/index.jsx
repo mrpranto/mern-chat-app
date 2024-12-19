@@ -9,6 +9,17 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import apiClient from "@/lib/api-client";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import {
   UPDATE_PROFIE_ROUTE,
   ADD_PROFIE_PICTURE_ROUTE,
   REMOVE_PROFIE_PICTURE_ROUTE,
@@ -156,12 +167,27 @@ function Profile() {
             {hovered && (
               <div
                 className="absolute inset-0 flex items-center justify-center bg-black/50 ring-fuchsia-50 rounded-full"
-                onClick={image ? handleDeletedImage : handleFileInputClick}
               >
                 {image ? (
+                  <AlertDialog>
+                  <AlertDialogTrigger asChild>
                   <FaTrash className="text-white text-3xl cursor-pointer" />
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure, you want to delete your profile picture ?</AlertDialogTitle>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>No</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => handleDeletedImage()}>Yes</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+                  
                 ) : (
-                  <FaPlus className="text-white text-3xl cursor-pointer" />
+
+                  <FaPlus className="text-white text-3xl cursor-pointer" onClick={() => handleFileInputClick()}/>
+                  
                 )}
               </div>
             )}
