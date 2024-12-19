@@ -11,6 +11,7 @@ import apiClient from "@/lib/api-client";
 import {
   UPDATE_PROFIE_ROUTE,
   ADD_PROFIE_PICTURE_ROUTE,
+  HOST,
 } from "@/utils/constants";
 import {
   notify_error,
@@ -33,7 +34,13 @@ function Profile() {
     setFirstName(userInfo.firstName);
     setLastName(userInfo.lastName);
     setSelectedColor(userInfo.color);
+    if(userInfo.image){
+      setImage(`${HOST}/${userInfo.image}`);
+    }
   }, [userInfo]);
+
+  console.log(image);
+  
 
   const saveChanges = async () => {
     try {
@@ -72,16 +79,16 @@ function Profile() {
       try {
         const formData = new FormData();
         formData.append("profile-image", file);
-        // const response = await apiClient.post(
-        //   ADD_PROFIE_PICTURE_ROUTE,
-        //   formData,
-        //   { withCredentials: true }
-        // );
+        const response = await apiClient.post(
+          ADD_PROFIE_PICTURE_ROUTE,
+          formData,
+          { withCredentials: true }
+        );
 
-        // if (response.status == 200 && response.data) {
-        //   setUserInfo(response.data);
-        //   notify_success("Profile Image update successfully.");
-        // }
+        if (response.status == 200 && response.data) {
+          setUserInfo(response.data);
+          notify_success("Profile Image update successfully.");
+        }
 
         const reader = new FileReader();
         reader.onload = () => {

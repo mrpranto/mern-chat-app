@@ -3,6 +3,7 @@ import User from "../models/User.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { request, response } from "express";
+import path from "path";
 
 const maxAge = 3 * 24 * 60 * 60 * 1000;
 
@@ -33,6 +34,7 @@ export const signup = async (req, res, next) => {
         email: user.email,
         color: user.color,
         profileSetup: user.profileSetup,
+        image: user.image,
         id: user._id,
       },
     });
@@ -76,6 +78,7 @@ export const login = async (req, res, next) => {
         email: user.email,
         color: user.color,
         profileSetup: user.profileSetup,
+        image: user.image,
         id: user._id,
       },
     });
@@ -107,6 +110,7 @@ export const user = async (req, res, next) => {
       email: user.email,
       color: user.color,
       profileSetup: user.profileSetup,
+      image: user.image,
       id: user._id,
     });
   } catch (err) {
@@ -170,21 +174,25 @@ export const updateProfile = async (req, res, next) => {
 };
 
 
-export const updateProfileImage = async(req, res, next) => {
+export const updateProfileImage = async (req, res) => {
+
   try {
-    validateResult(req);
+
+    
+    const fullPath = req.file.path;
+    const projectRoot = path.join();
+    const relativePath = path.relative(projectRoot, fullPath);
+  
+    if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+    }
 
     const { userId } = req;
-    const { firstName, lastName, color } = req.body;
+    const image = relativePath;
 
     const user = await User.findByIdAndUpdate(
       userId,
-      {
-        firstName,
-        lastName,
-        color,
-        profileSetup: true,
-      },
+      {image},
       { new: true, runValidators: true }
     );
 
@@ -198,6 +206,7 @@ export const updateProfileImage = async(req, res, next) => {
       email: user.email,
       profileSetup: user.profileSetup,
       color: user.color,
+      image: user.image,
       id: user._id,
     });
   } catch (err) {
@@ -213,4 +222,4 @@ export const updateProfileImage = async(req, res, next) => {
       message: "Internal Server error.",
     });
   }
-}
+};

@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import router from "./routes/Api.js";
+import multer from "multer";
 
 dotenv.config();
 
@@ -18,11 +19,19 @@ app.use(cors({
     credentials: true
 }));
 
-app.use("/uploads/profiles", express.static("uploads/profiles"));
+app.use('/uploads', express.static('uploads'));
+
 app.use(cookieParser());
 app.use(express.json());
 app.use('/', router);
 
+
+app.use((err, req, res, next) => {
+    if (err instanceof multer.MulterError) {
+      return res.status(423).json({ error: err.message });
+    }
+    next();
+  });
 
 const server = app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`)
