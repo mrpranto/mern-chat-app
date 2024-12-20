@@ -157,7 +157,9 @@ function Profile() {
                 {image ? (
                   <ConfirmDialog
                     dialogButton={
-                      <FaTrash className="text-gray-400 dark:text-gray-500 w-11 h-11 mb-3.5 mx-auto" />
+                      <span>
+                          <FaTrash className="text-white text-3xl cursor-pointer" />
+                      </span>
                     }
                     message="Are you sure you want to delete your profile picture?"
                     onConfirm={() => handleDeletedImage()}
@@ -173,6 +175,7 @@ function Profile() {
               </div>
             )}
           </div>
+          
           <input
             type="file"
             ref={fileInputRef}
