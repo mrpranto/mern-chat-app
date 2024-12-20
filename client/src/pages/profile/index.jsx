@@ -2,23 +2,12 @@ import { useAppStore } from "@/store";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoArrowBack, IoSave } from "react-icons/io5";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { colors, getColor } from "@/lib/utils";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import apiClient from "@/lib/api-client";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
 import {
   UPDATE_PROFIE_ROUTE,
   ADD_PROFIE_PICTURE_ROUTE,
@@ -30,6 +19,7 @@ import {
   notify_success,
   notify_warning,
 } from "@/utils/notifications";
+import ConfirmDialog from "@/components/custom/ConfirmDialog";
 
 function Profile() {
   const navigate = useNavigate();
@@ -46,7 +36,7 @@ function Profile() {
     setFirstName(userInfo.firstName);
     setLastName(userInfo.lastName);
     setSelectedColor(userInfo.color);
-    if(userInfo.image){
+    if (userInfo.image) {
       setImage(`${HOST}/${userInfo.image}`);
     }
   }, [userInfo]);
@@ -102,9 +92,8 @@ function Profile() {
         const reader = new FileReader();
         reader.onload = () => {
           setImage(reader.result);
-        }
+        };
         reader.readAsDataURL(file);
-
       } catch (err) {
         setValidationError(err?.response?.data?.errors);
         notify_error(err?.response?.data?.message);
@@ -114,10 +103,9 @@ function Profile() {
 
   const handleDeletedImage = async () => {
     try {
-      const response = await apiClient.delete(
-        REMOVE_PROFIE_PICTURE_ROUTE,
-        { withCredentials: true }
-      );
+      const response = await apiClient.delete(REMOVE_PROFIE_PICTURE_ROUTE, {
+        withCredentials: true,
+      });
 
       if (response.status == 200 && response.data) {
         setUserInfo(response.data);
@@ -165,29 +153,22 @@ function Profile() {
               )}
             </Avatar>
             {hovered && (
-              <div
-                className="absolute inset-0 flex items-center justify-center bg-black/50 ring-fuchsia-50 rounded-full"
-              >
+              <div className="absolute inset-0 flex items-center justify-center bg-black/50 ring-fuchsia-50 rounded-full">
                 {image ? (
-                  <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                  <FaTrash className="text-white text-3xl cursor-pointer" />
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you sure, you want to delete your profile picture ?</AlertDialogTitle>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>No</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => handleDeletedImage()}>Yes</AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-                  
+                  <ConfirmDialog
+                    dialogButton={
+                      <FaTrash className="text-gray-400 dark:text-gray-500 w-11 h-11 mb-3.5 mx-auto" />
+                    }
+                    message="Are you sure you want to delete your profile picture?"
+                    onConfirm={() => handleDeletedImage()}
+                    confirmText="Yes, Delete it"
+                    cancelText="No, Keep it"
+                  />
                 ) : (
-
-                  <FaPlus className="text-white text-3xl cursor-pointer" onClick={() => handleFileInputClick()}/>
-                  
+                  <FaPlus
+                    className="text-white text-3xl cursor-pointer"
+                    onClick={() => handleFileInputClick()}
+                  />
                 )}
               </div>
             )}
