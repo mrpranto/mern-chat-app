@@ -3,6 +3,9 @@ import { notify_warning } from "@/utils/notifications";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import ContactChatContainer from "./components/contact-container";
+import EmptyChatContainer from "./components/empty-chat-container";
+import ChatContainer from "./components/chat-container";
 
 function Chat() {
 
@@ -18,7 +21,11 @@ function Chat() {
 
     }, [userInfo, navigate])
 
-    return <h1>Hello from chat</h1>;
+    return <div className="flex h-[100vh] text-white overflow-hidden">
+        <ContactChatContainer />
+        <EmptyChatContainer />
+        <ChatContainer />
+    </div>;
 }
 
 export default Chat;
