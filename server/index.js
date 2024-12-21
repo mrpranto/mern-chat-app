@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import router from "./routes/Api.js";
 import multer from "multer";
+import setupSocket from "./socket.js";
 
 dotenv.config();
 
@@ -36,6 +37,8 @@ app.use((err, req, res, next) => {
 const server = app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`)
 });
+
+setupSocket(server);
 
 mongoose.connect(databaseURL)
 .then(() => console.log("Database Connection successful."))
