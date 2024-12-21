@@ -157,6 +157,7 @@ export const updateProfile = async (req, res, next) => {
       email: user.email,
       profileSetup: user.profileSetup,
       color: user.color,
+      image: user.image,
       id: user._id,
     });
   } catch (err) {
