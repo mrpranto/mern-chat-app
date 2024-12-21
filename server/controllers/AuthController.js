@@ -264,3 +264,27 @@ export const removeProfilePicture  = async(req, res) => {
     });
   }
 }
+
+
+export const logout  = async(req, res) => {
+  try {
+    
+    res.cookie("jwt", "", {maxAge: 1, secure: true, sameSite: "None"});
+    return res.status(200).send({
+      message: "Logout Successful.",
+    });
+
+  } catch (err) {
+    if (err.errors) {
+      return res.status(err.statusCode).send({
+        message: err.message,
+        errors: err.errors,
+      });
+    }
+    console.log(err);
+
+    return res.status(500).send({
+      message: "Internal Server error.",
+    });
+  }
+}
