@@ -25,7 +25,7 @@ export const searchContacts = async(req, res, next) => {
         });
     
 
-        return res.status(201).json({contacts});
+        return res.status(200).json({contacts});
 
       } catch (err) {
         if (err.errors) {
