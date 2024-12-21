@@ -21,11 +21,13 @@ function Chat() {
 
     }, [userInfo, navigate])
 
-    return <div className="flex h-[100vh] text-white overflow-hidden">
+    return (
+        <div className="flex h-[100vh] text-white overflow-hidden">
         <ContactChatContainer />
         {/* <EmptyChatContainer /> */}
-        <ChatContainer />
-    </div>;
+        {/* <ChatContainer /> */}
+    </div>
+    );
 }
 
 export default Chat;
