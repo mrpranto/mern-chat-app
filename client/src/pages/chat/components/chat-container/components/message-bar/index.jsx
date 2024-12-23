@@ -48,7 +48,7 @@ function MessageBar() {
           type="text"
           placeholder="Enter Message"
           value={message}
-          onChange={(e) => e.target.value}
+          onChange={(e) => setMessage(e.target.value)}
           className="flex-1 p-5 bg-transparent rounded-md focus:border-none focus:outline-none"
         />
         <GrAttachment className="text-2xl cursor-pointer duration-300 transition-all" />
