@@ -14,3 +14,8 @@ export const LOGOUT_ROUTE = `${AUTH_ROUTES}/logout`;
 //This routes are all contact related routes
 
 export const CONTACTS_ROUTE = "api/contact";
+
+//This routes are all message related routes
+
+export const MESSAGE_ROUTE = "api/messages";
+export const USER_MESSAGE = `${MESSAGE_ROUTE}`

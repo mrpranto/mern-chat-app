@@ -1,11 +1,40 @@
+import apiClient from "@/lib/api-client";
 import { useAppStore } from "@/store";
+import { USER_MESSAGE } from "@/utils/constants";
 import moment from "moment";
 import { useEffect, useRef } from "react";
 
 function MessageContainer() {
   const scrollRef = useRef();
-  const { selectedChatType, selectedChatData, userInfo, selectedChatMessages } =
+  const { selectedChatType, selectedChatData, userInfo, selectedChatMessages, setSelectedChatMessages } =
     useAppStore();
+
+    useEffect(() => {
+
+      const getMessages = async () => {
+
+        try{
+
+          const response = await apiClient.get(`${USER_MESSAGE}/${selectedChatData._id}`, {withCredentials:true});
+          if(response.data.messages){
+            setSelectedChatMessages(response.data.messages)
+          }
+  
+        }catch(err){
+          console.log({err});
+        }
+
+      }
+
+      if(selectedChatData._id){
+        if(selectedChatType === "contact"){
+          getMessages();
+        }
+      }
+
+    }, [
+      selectedChatData, selectedChatType, setSelectedChatMessages
+    ])
 
   useEffect(() => {
     if (scrollRef.current) {
