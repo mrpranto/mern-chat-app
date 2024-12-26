@@ -1,6 +1,7 @@
 import { useSocket } from "@/context/SocketContex";
 import { useAppStore } from "@/store";
 import EmojiPicker from "emoji-picker-react";
+import { use } from "react";
 import { useEffect, useRef, useState } from "react";
 import { GrAttachment } from "react-icons/gr";
 import { IoSend } from "react-icons/io5";
@@ -8,12 +9,14 @@ import { RiEmojiStickerLine } from "react-icons/ri";
 
 function MessageBar() {
   const emojiRef = useRef();
+  const messageRef = useRef('');
   const {selectedChatType, selectedChatData, userInfo} = useAppStore();
   const socket = useSocket();
   const [message, setMessage] = useState("");
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
   useEffect(() => {
+    messageRef.current.focus();
     function handleClickOutside(event){
         if(emojiRef.current && !emojiRef.current.contains(event.target)){
             setEmojiPickerOpen(false)
@@ -38,6 +41,8 @@ function MessageBar() {
         messageType: "text",
         fileUrl: undefined
       })
+      setMessage("")
+      messageRef.current.focus();
     }
   };
 
@@ -46,7 +51,9 @@ function MessageBar() {
       <div className="flex-1 flex bg-[#2a2b33] rounded-md items-center gap-5 pr-5">
         <input
           type="text"
+          ref={messageRef}
           placeholder="Enter Message"
+          autoFocus
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           className="flex-1 p-5 bg-transparent rounded-md focus:border-none focus:outline-none"

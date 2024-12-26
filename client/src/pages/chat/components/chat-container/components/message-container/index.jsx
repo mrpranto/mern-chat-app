@@ -77,7 +77,7 @@ function MessageContainer() {
         )}
         <div className="text-xs text-gray-600">
             {
-                moment(message.timestamp).format("LT")
+                moment(message.timestamp).format("ll LT")
             }
         </div>
     </div>
