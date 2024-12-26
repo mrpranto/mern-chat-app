@@ -22,6 +22,7 @@ export const getUserMessages = async (req, res, next) => {
         return res.status(200).json({messages});
 
     }catch(err){
+        
         if (err.errors) {
             return res.status(err.statusCode).send({
               message: err.message,

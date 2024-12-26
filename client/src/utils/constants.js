@@ -14,6 +14,7 @@ export const LOGOUT_ROUTE = `${AUTH_ROUTES}/logout`;
 //This routes are all contact related routes
 
 export const CONTACTS_ROUTE = "api/contact";
+export const GET_DM_CONTACTS_ROUTES = `${CONTACTS_ROUTE}/get-contacts-for-dm`;
 
 //This routes are all message related routes
 
