@@ -32,6 +32,12 @@ function MessageBar() {
     setMessage((msg) => msg + emoji.emoji)
   }
 
+  const handleEnterKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleSendMessage();
+    }
+  };
+
   const handleSendMessage = () => {
     if(selectedChatType === "contact"){
       socket.emit("sendMessage", {
@@ -56,6 +62,7 @@ function MessageBar() {
           autoFocus
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={(e) => handleEnterKeyDown(e)}
           className="flex-1 p-5 bg-transparent rounded-md focus:border-none focus:outline-none"
         />
         <GrAttachment className="text-2xl cursor-pointer duration-300 transition-all" />
