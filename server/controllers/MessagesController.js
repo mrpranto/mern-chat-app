@@ -1,6 +1,8 @@
 import { response } from "express";
 import Message from "../models/Messages.model.js";
 import { validateResult } from "../helpers/ValidationHelper.js";
+import path from "path";
+import { log } from "console";
 
 export const getUserMessages = async (req, res, next) => {
     try{
@@ -36,3 +38,36 @@ export const getUserMessages = async (req, res, next) => {
           }); 
     }
 }
+
+export const uploadFiles = async (req, res) => {
+
+  try {
+
+    const files = req.files;
+
+    let filePathData = [];
+
+    filePathData = files.map((file) => {
+      const projectRoot = path.join();
+
+      const relativePath = path.relative(projectRoot, file.path);
+
+      return {"path": relativePath};
+    })
+
+    return res.status(200).json({filePathData});
+    
+  } catch (err) {
+    if (err.errors) {
+      return res.status(err.statusCode).send({
+        message: err.message,
+        errors: err.errors,
+      });
+    }
+    console.log(err);
+
+    return res.status(500).send({
+      message: "Internal Server error.",
+    });
+  }
+};

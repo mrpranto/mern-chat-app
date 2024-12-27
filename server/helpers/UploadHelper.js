@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 
 
 
-const fileFilter = (req, file, cb) => {
+const imageFilter = (req, file, cb) => {
   const allowedExtensions = /\.(jpg|jpeg|png|svg|webp)$/i;
   if (allowedExtensions.test(path.extname(file.originalname))) {
       cb(null, true);
@@ -32,10 +32,45 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({
+export const upload = multer({
   storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  imageFilter,
+});
+
+
+
+// File upload function
+
+const uploadFilesDir = path.join(__dirname, "../uploads/message-files");
+if (!fs.existsSync(uploadFilesDir)) {
+  fs.mkdirSync(uploadFilesDir, { recursive: true });
+}
+
+
+const storageFiles = multer.diskStorage({
+  destination: (req, file, cb) => {
+      cb(null, uploadFilesDir);
+  },
+  filename: (req, file, cb) => {
+      cb(null, `${Date.now()}-${file.originalname}`); // Unique file naming
+  },
+});
+
+
+
+const fileFilter = (req, file, cb) => {
+  const allowedExtensions = /\.(jpg|jpeg|png|svg|webp|doc|docs|xls|xlsx|pdf|csv)$/i;
+  if (allowedExtensions.test(path.extname(file.originalname))) {
+      cb(null, true);
+  } else {
+      cb(new Error('Invalid file type. Only JPG, PNG, SVG, WEBP, DOC, DOCS, XLSX, XLS, PDF, CSV are allowed.'));
+  }
+};
+
+
+export const uplaodFiles = multer({
+  storage: storageFiles,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter,
 });
-
-  export default upload;

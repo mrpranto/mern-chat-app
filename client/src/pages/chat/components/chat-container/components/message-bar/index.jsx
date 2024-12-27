@@ -1,5 +1,7 @@
 import { useSocket } from "@/context/SocketContex";
+import apiClient from "@/lib/api-client";
 import { useAppStore } from "@/store";
+import { UPLOAD_FILE_ROUTE } from "@/utils/constants";
 import EmojiPicker from "emoji-picker-react";
 import { use } from "react";
 import { useEffect, useRef, useState } from "react";
@@ -9,6 +11,7 @@ import { RiEmojiStickerLine } from "react-icons/ri";
 
 function MessageBar() {
   const emojiRef = useRef();
+  const fileInputRef = useRef();
   const messageRef = useRef('');
   const {selectedChatType, selectedChatData, userInfo} = useAppStore();
   const socket = useSocket();
@@ -38,6 +41,12 @@ function MessageBar() {
     }
   };
 
+  const handleAttachmentClick = () => {
+    if(fileInputRef.current){
+      fileInputRef.current.click();
+    }
+  }
+
   const handleSendMessage = () => {
     if(selectedChatType === "contact"){
       socket.emit("sendMessage", {
@@ -52,6 +61,47 @@ function MessageBar() {
     }
   };
 
+  const handleAttachmentChange = async (event) => {
+    try{
+
+      const files = event.target.files;
+
+      if (files.length) {
+
+        const formData = new FormData();
+
+        // for (let i = 0; i < files.length; i++) {
+
+        //   let file = files[i];
+
+        //   formData.append("files[" + i + "]", file);
+        // }
+
+        formData.append("files", files);
+
+        const response = await apiClient.post(UPLOAD_FILE_ROUTE, formData, {withCredentials: true});
+
+        if(response.status == 200 && response.data.filePathData){
+          response.data.filePathData.forEach((filePath) => {
+            socket.emit("sendMessage", {
+              sender: userInfo.id,
+              content: undefined,
+              recipient: selectedChatData._id,
+              messageType: "file",
+              fileUrl: filePath.path
+            })
+            setMessage("")
+            messageRef.current.focus();
+          })
+        }
+      }
+
+    }catch(err){
+
+      console.log(err);
+    }
+  }
+
   return (
     <div className="h-[10vh] bg-[#1c1d25] flex justify-center items-center px-8 mb-6 gap-6">
       <div className="flex-1 flex bg-[#2a2b33] rounded-md items-center gap-5 pr-5">
@@ -65,7 +115,8 @@ function MessageBar() {
           onKeyDown={(e) => handleEnterKeyDown(e)}
           className="flex-1 p-5 bg-transparent rounded-md focus:border-none focus:outline-none"
         />
-        <GrAttachment className="text-2xl cursor-pointer duration-300 transition-all" />
+        <GrAttachment className="text-2xl cursor-pointer duration-300 transition-all" onClick={handleAttachmentClick} />
+        <input type="file" className="hidden" ref={fileInputRef} multiple onChange={handleAttachmentChange}/>
         <div className="relative">
           <RiEmojiStickerLine className="text-2xl cursor-pointer duration-300 transition-all" onClick={() => setEmojiPickerOpen(true)}/>
           <div className="absolute bottom-16 right-0" ref={emojiRef}>
