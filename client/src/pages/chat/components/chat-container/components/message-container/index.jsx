@@ -1,6 +1,6 @@
 import apiClient from "@/lib/api-client";
 import { useAppStore } from "@/store";
-import { USER_MESSAGE } from "@/utils/constants";
+import { HOST, USER_MESSAGE } from "@/utils/constants";
 import moment from "moment";
 import { useEffect, useRef } from "react";
 
@@ -61,6 +61,11 @@ function MessageContainer() {
     });
   };
 
+  const checkIfImage = (fileUrl) => {
+    const imageType = /\.(jpg|jpeg|png|svg|webp|gif)$/i;
+    return imageType.test(fileUrl);
+  }
+
   const renderDBMessages = (message) => (
     <div className={`${message.sender === selectedChatData._id ? "text-left" : "text-right"}`}>
       {
@@ -75,6 +80,22 @@ function MessageContainer() {
         {message.content}
       </div>
         )}
+
+      {
+        message.messageType === "file" && (
+            <div
+        className={`${
+          message.sender !== selectedChatData._id
+            ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
+            : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20"
+        } border inline-block p-4 rounded my-1 max-w-[50%] break-words`}
+      >
+        {checkIfImage(message.fileUrl) ? <div className="cursor-pointer">
+          <img src={`${HOST}/${message.fileUrl}`} height={300} width={300} />
+        </div> : <div></div>}
+      </div>
+        )}
+
         <div className="text-xs text-gray-600">
             {
                 moment(message.timestamp).format("ll LTS")

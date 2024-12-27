@@ -70,14 +70,12 @@ function MessageBar() {
 
         const formData = new FormData();
 
-        // for (let i = 0; i < files.length; i++) {
+        for (let i = 0; i < files.length; i++) {
 
-        //   let file = files[i];
+          let file = files[i];
 
-        //   formData.append("files[" + i + "]", file);
-        // }
-
-        formData.append("files", files);
+          formData.append("files", file);
+        }
 
         const response = await apiClient.post(UPLOAD_FILE_ROUTE, formData, {withCredentials: true});
 

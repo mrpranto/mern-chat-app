@@ -63,7 +63,7 @@ function ContactList({ contacts, isChannel = false }) {
                 isChannel && <div className="bg-[#ffffff22] h-10 w-10 flex items-center justify-center rounded-full">#</div>
             }
             {
-                isChannel ? <span>{contact.name}</span> : (contact.firstName ? <span>{`${contact.firstName} ${contact.firstName}`}</span> : contact.email )
+                isChannel ? <span>{contact.name}</span> : (contact.firstName ? <span>{`${contact.firstName} ${contact.lastName}`}</span> : contact.email )
             }
           </div>
         </div>
