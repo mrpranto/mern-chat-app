@@ -120,7 +120,7 @@ function MessageBar() {
         <GrAttachment className="text-2xl cursor-pointer duration-300 transition-all" onClick={handleAttachmentClick} />
         <input type="file" className="hidden" ref={fileInputRef} multiple onChange={handleAttachmentChange}/>
         <div className="relative">
-          <RiEmojiStickerLine className="text-2xl cursor-pointer duration-300 transition-all" onClick={() => setEmojiPickerOpen(true)}/>
+          <RiEmojiStickerLine className="text-2xl cursor-pointer duration-300 z- transition-all" onClick={() => setEmojiPickerOpen(true)}/>
           <div className="absolute bottom-16 right-0" ref={emojiRef}>
             <EmojiPicker theme="dark" 
             open={emojiPickerOpen} 

@@ -152,7 +152,7 @@ function MessageContainer() {
       {renderMessage()}
       <div ref={scrollRef} />
       {
-        showImage && <div className="fixed x-[1000] top-0 left-0 h-[100vh] w-[100vw] flex items-center justify-center backdrop-blur-lg flex-col">
+        showImage && <div className="fixed z-[1000] top-0 left-0 h-[100vh] w-[100vw] flex items-center justify-center backdrop-blur-lg flex-col">
           <div className="">
             <img src={`${HOST}/${imageURL}`} className="h-[80vh] w-full bg-cover" />
           </div>
