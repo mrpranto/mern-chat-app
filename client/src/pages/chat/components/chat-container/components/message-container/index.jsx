@@ -5,6 +5,8 @@ import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import { MdFolderZip } from "react-icons/md";
 import { IoArrowDownCircle, IoCloseSharp } from "react-icons/io5";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { getColor } from "@/lib/utils";
 
 function MessageContainer() {
   const scrollRef = useRef();
@@ -104,6 +106,30 @@ function MessageContainer() {
         message.sender === selectedChatData._id ? "text-left" : "text-right"
       }`}
     >
+
+{/* <div className="w-6 h-6 relative">
+                      <Avatar className="h-6 w-6 rounded-full overflow-hidden">
+                        {selectedChatData.image ? (
+                          <AvatarImage
+                            src={`${HOST}/${selectedChatData.image}`}
+                            alt="profile"
+                            className="object-cover w-full h-full bg-black"
+                          />
+                        ) : (
+                          <div
+                            className={`uppercase h-12 w-12 text-lg border-[1px] flex items-center justify-center rounded-full ${getColor(
+                                selectedChatData.color
+                            )}`}
+                          >
+                            {selectedChatData.firstName
+                              ? selectedChatData.firstName.split("").shift()
+                              : selectedChatData.email.split("").shift()}
+                          </div>
+                        )}
+                      </Avatar>
+
+                    </div> */}
+
       {message.messageType === "text" && (
         <div
           className={`${
