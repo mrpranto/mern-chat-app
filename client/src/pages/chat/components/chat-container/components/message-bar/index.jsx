@@ -2,6 +2,7 @@ import { useSocket } from "@/context/SocketContex";
 import apiClient from "@/lib/api-client";
 import { useAppStore } from "@/store";
 import { UPLOAD_FILE_ROUTE } from "@/utils/constants";
+import { notify_error } from "@/utils/notifications";
 import EmojiPicker from "emoji-picker-react";
 import { use } from "react";
 import { useEffect, useRef, useState } from "react";
@@ -95,8 +96,11 @@ function MessageBar() {
       }
 
     }catch(err){
-
-      console.log(err);
+      if(err?.response?.data?.error){
+        notify_error(err?.response?.data?.error)
+      }else{
+        console.log(err);
+      }
     }
   }
 
