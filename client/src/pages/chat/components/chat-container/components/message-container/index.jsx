@@ -131,6 +131,7 @@ function MessageContainer() {
                     </div> */}
 
       {message.messageType === "text" && (
+        <>
         <div
           className={`${
             message.sender !== selectedChatData._id
@@ -140,6 +141,8 @@ function MessageContainer() {
         >
           {message.content}
         </div>
+        </>
+        
       )}
 
       {message.messageType === "file" && (
