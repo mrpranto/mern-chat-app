@@ -13,96 +13,112 @@ import { RiEmojiStickerLine } from "react-icons/ri";
 function MessageBar() {
   const emojiRef = useRef();
   const fileInputRef = useRef();
-  const messageRef = useRef('');
-  const {selectedChatType, selectedChatData, userInfo} = useAppStore();
+  const messageRef = useRef("");
+  const {
+    selectedChatType,
+    selectedChatData,
+    userInfo,
+    setIsUploading,
+    setFileUploadProgress
+  } = useAppStore();
   const socket = useSocket();
   const [message, setMessage] = useState("");
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
   useEffect(() => {
     messageRef.current.focus();
-    function handleClickOutside(event){
-        if(emojiRef.current && !emojiRef.current.contains(event.target)){
-            setEmojiPickerOpen(false)
-        }
+    function handleClickOutside(event) {
+      if (emojiRef.current && !emojiRef.current.contains(event.target)) {
+        setEmojiPickerOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-    }
-  }, [emojiRef])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [emojiRef]);
 
   const handleAddEmoji = (emoji) => {
-    setMessage((msg) => msg + emoji.emoji)
-  }
+    setMessage((msg) => msg + emoji.emoji);
+  };
 
   const handleEnterKeyDown = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       handleSendMessage();
     }
   };
 
   const handleAttachmentClick = () => {
-    if(fileInputRef.current){
+    if (fileInputRef.current) {
       fileInputRef.current.click();
     }
-  }
+  };
 
   const handleSendMessage = () => {
-    if(selectedChatType === "contact"){
+    if (message && selectedChatType === "contact") {
       socket.emit("sendMessage", {
         sender: userInfo.id,
         content: message,
         recipient: selectedChatData._id,
         messageType: "text",
-        fileUrl: undefined
-      })
-      setMessage("")
+        fileUrl: undefined,
+      });
+      setMessage("");
       messageRef.current.focus();
     }
   };
 
   const handleAttachmentChange = async (event) => {
-    try{
-
+    try {
       const files = event.target.files;
 
       if (files.length) {
-
         const formData = new FormData();
 
         for (let i = 0; i < files.length; i++) {
-
           let file = files[i];
 
           formData.append("files", file);
         }
 
-        const response = await apiClient.post(UPLOAD_FILE_ROUTE, formData, {withCredentials: true});
+        setIsUploading(true);
+        const response = await apiClient.post(UPLOAD_FILE_ROUTE, formData, {
+          withCredentials: true,
+          onUploadProgress: progressEvent => {
+            const {loaded, total} = progressEvent;
+            const percentCompleted = Math.round((loaded*100)/total);
+            console.log(percentCompleted);
+            
+            setFileUploadProgress(percentCompleted);
+          },
+        });
 
-        if(response.status == 200 && response.data.filePathData){
-          response.data.filePathData.forEach((filePath) => {
-            socket.emit("sendMessage", {
-              sender: userInfo.id,
-              content: undefined,
-              recipient: selectedChatData._id,
-              messageType: "file",
-              fileUrl: filePath.path
-            })
-            setMessage("")
-            messageRef.current.focus();
-          })
+        if (response.status == 200 && response.data.filePathData) {
+          setIsUploading(false);
+          if (selectedChatType === "contact") {
+            response.data.filePathData.forEach((filePath) => {
+              socket.emit("sendMessage", {
+                sender: userInfo.id,
+                content: undefined,
+                recipient: selectedChatData._id,
+                messageType: "file",
+                fileUrl: filePath.path,
+              });
+              setMessage("");
+              messageRef.current.focus();
+            });
+          }
         }
       }
-
-    }catch(err){
-      if(err?.response?.data?.error){
-        notify_error(err?.response?.data?.error)
-      }else{
+    } catch (err) {
+      setIsUploading(false);
+      if (err?.response?.data?.error) {
+        notify_error(err?.response?.data?.error);
+      } else {
         console.log(err);
       }
     }
-  }
+  };
 
   return (
     <div className="h-[10vh] bg-[#1c1d25] flex justify-center items-center px-8 mb-6 gap-6">
@@ -117,15 +133,29 @@ function MessageBar() {
           onKeyDown={(e) => handleEnterKeyDown(e)}
           className="flex-1 p-5 bg-transparent rounded-md focus:border-none focus:outline-none"
         />
-        <GrAttachment className="text-2xl cursor-pointer duration-300 transition-all" onClick={handleAttachmentClick} />
-        <input type="file" className="hidden" ref={fileInputRef} multiple onChange={handleAttachmentChange}/>
+        <GrAttachment
+          className="text-2xl cursor-pointer duration-300 transition-all"
+          onClick={handleAttachmentClick}
+        />
+        <input
+          type="file"
+          className="hidden"
+          ref={fileInputRef}
+          multiple
+          onChange={handleAttachmentChange}
+        />
         <div className="relative">
-          <RiEmojiStickerLine className="text-2xl cursor-pointer duration-300 z- transition-all" onClick={() => setEmojiPickerOpen(true)}/>
+          <RiEmojiStickerLine
+            className="text-2xl cursor-pointer duration-300 transition-all"
+            onClick={() => setEmojiPickerOpen(true)}
+          />
           <div className="absolute bottom-16 right-0" ref={emojiRef}>
-            <EmojiPicker theme="dark" 
-            open={emojiPickerOpen} 
-            onEmojiClick={handleAddEmoji} 
-            autoFocusSearch={false}/>
+            <EmojiPicker
+              theme="dark"
+              open={emojiPickerOpen}
+              onEmojiClick={handleAddEmoji}
+              autoFocusSearch={false}
+            />
           </div>
         </div>
       </div>

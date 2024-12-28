@@ -14,6 +14,8 @@ function MessageContainer() {
     userInfo,
     selectedChatMessages,
     setSelectedChatMessages,
+    setIsDownloading,
+    setFileDownloadProgress
   } = useAppStore();
 
   const [showImage, setShowImage] = useState(false);
@@ -72,8 +74,16 @@ function MessageContainer() {
   };
 
   const downloadFile = async (fileUrl) => {
+    setIsDownloading(true);
+    setFileDownloadProgress(0);
+    setShowImage(false);
     const response = await apiClient.get(`${HOST}/${fileUrl}`, {
       responseType: "blob",
+      onDownloadProgress: (progressEvent) => {
+        const {loaded, total} = progressEvent;
+        const percentCompleted = Math.round((loaded*100)/total);
+        setFileDownloadProgress(percentCompleted);
+      }
     });
 
     const urlBlob = window.URL.createObjectURL(new Blob([response.data]));
@@ -84,6 +94,8 @@ function MessageContainer() {
     link.click();
     link.remove();
     window.URL.revokeObjectURL(urlBlob);
+    setIsDownloading(false);
+    setFileDownloadProgress(0);
   };
 
   const renderDBMessages = (message) => (
@@ -120,7 +132,7 @@ function MessageContainer() {
                 width={300}
                 onClick={() => {
                   setShowImage(true);
-                  setImageURL(message.fileUrl)
+                  setImageURL(message.fileUrl);
                 }}
               />
             </div>
@@ -151,31 +163,34 @@ function MessageContainer() {
     <div className="flex-1 overflow-auto scrollbar-hidden p-4 px-8 md:w-[65vw] lg:w-[70-vw] xl:w-[80vw] w-full">
       {renderMessage()}
       <div ref={scrollRef} />
-      {
-        showImage && <div className="fixed z-[1000] top-0 left-0 h-[100vh] w-[100vw] flex items-center justify-center backdrop-blur-lg flex-col">
+      {showImage && (
+        <div className="fixed z-[1000] top-0 left-0 h-[100vh] w-[100vw] flex items-center justify-center backdrop-blur-lg flex-col">
           <div className="">
-            <img src={`${HOST}/${imageURL}`} className="h-[80vh] w-full bg-cover" />
+            <img
+              src={`${HOST}/${imageURL}`}
+              className="h-[80vh] w-full bg-cover"
+            />
           </div>
           <div className="flex gap-5 fixed top-0 mt-5">
-          <span
-                className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
-                onClick={() => downloadFile(imageURL)}
-              >
-                <IoArrowDownCircle />
-              </span>
+            <span
+              className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
+              onClick={() => downloadFile(imageURL)}
+            >
+              <IoArrowDownCircle />
+            </span>
 
-              <span
-                className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
-                onClick={() => {
-                  setShowImage(false)
-                  setImageURL(null)
-                }}
-              >
-                <IoCloseSharp />
-              </span>
+            <span
+              className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
+              onClick={() => {
+                setShowImage(false);
+                setImageURL(null);
+              }}
+            >
+              <IoCloseSharp />
+            </span>
           </div>
         </div>
-      }
+      )}
     </div>
   );
 }
