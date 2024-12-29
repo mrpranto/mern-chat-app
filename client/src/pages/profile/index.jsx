@@ -55,8 +55,8 @@ function Profile() {
         navigate("/chat");
       }
     } catch (err) {
-      setValidationError(err?.response?.data?.error);
-      notify_error(err?.response?.data?.error);
+      setValidationError(err?.response?.data?.errors);
+      notify_error(err?.response?.data?.message);
     }
   };
 
@@ -95,7 +95,7 @@ function Profile() {
         };
         reader.readAsDataURL(file);
       } catch (err) {
-        setValidationError(err?.response?.data?.error);
+        setValidationError(err?.response?.data?.errors);
         notify_error(err?.response?.data?.error);
       }
     }
@@ -113,7 +113,7 @@ function Profile() {
         setImage(null);
       }
     } catch (err) {
-      setValidationError(err?.response?.data?.error);
+      setValidationError(err?.response?.data?.errors);
       notify_error(err?.response?.data?.message);
     }
   };
