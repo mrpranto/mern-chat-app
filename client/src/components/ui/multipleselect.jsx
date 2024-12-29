@@ -278,9 +278,9 @@ const MultipleSelector = React.forwardRef(
                   data-disabled={disabled || undefined}
                 >
                   {option.label}
-                  <button
+                  <span
                     className={cn(
-                      "ml-1 rounded-full text-white outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                      "ml-1 rounded-full text-white outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer",
                       (disabled || option.fixed) && "hidden"
                     )}
                     onKeyDown={(e) => {
@@ -295,7 +295,7 @@ const MultipleSelector = React.forwardRef(
                     onClick={() => handleUnselect(option)}
                   >
                     <X className="h-4 w-4 text-white hover:text-purple-500" />
-                  </button>
+                  </span>
                 </Badge>
               );
             })}
@@ -335,10 +335,10 @@ const MultipleSelector = React.forwardRef(
                 inputProps?.className
               )}
             />
-            <button
-              type="button"
+            <span
               onClick={() => setSelected(selected.filter((s) => s.fixed))}
               className={cn(
+                "cursor-pointer mt-1",
                 (hideClearAllButton ||
                   disabled ||
                   selected.length < 1 ||
@@ -347,7 +347,7 @@ const MultipleSelector = React.forwardRef(
               )}
             >
               <X />
-            </button>
+            </span>
           </div>
         </div>
         <div className="relative">
