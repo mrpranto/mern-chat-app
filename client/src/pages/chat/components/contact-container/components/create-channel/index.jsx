@@ -16,8 +16,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { animationDefaultOptions, getColor } from "@/lib/utils";
 import Lottie from "react-lottie";
-import { notify_error } from "@/utils/notifications";
-import { CONTACTS_ROUTE, GET_ALL_CONTACTS, HOST } from "@/utils/constants";
+import { notify_error, notify_success } from "@/utils/notifications";
+import { CONTACTS_ROUTE, CREATE_CHANNEL_ROUTE, GET_ALL_CONTACTS, HOST } from "@/utils/constants";
 import apiClient from "@/lib/api-client";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
@@ -26,7 +26,7 @@ import { Button } from "@/components/ui/button";
 import MultipleSelector from "@/components/ui/multipleselect";
 
 function CreateChannel() {
-  const { setSelectedChatType, setSelectedChatData } = useAppStore();
+  const { setSelectedChatType, setSelectedChatData, addChannel } = useAppStore();
   const [newChannelModel, setNewChannelModel] = useState(false);
   const [searchedContacts, setSearchedContacts] = useState("");
   const [allContacts, setAllContacts] = useState([]);
@@ -47,7 +47,25 @@ function CreateChannel() {
 
 
   const createChannel = async () => {
+    try{
 
+      const response = await apiClient.post(CREATE_CHANNEL_ROUTE,{
+        name: channelName,
+        members: selectedContacts.map((contact) => contact.value)
+      }, {withCredentials: true});
+
+      if(response.status === 201){
+        setChannelName("");
+        setSelectedContacts([]);
+        setNewChannelModel(false);
+        addChannel(response.data.channel);
+        notify_success("Channel Created successful.")
+      }
+
+    }catch(err){
+      console.log(err);
+      notify_error(err?.response?.data?.message);
+    }
   }
 
   return (

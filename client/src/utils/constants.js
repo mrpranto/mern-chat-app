@@ -20,5 +20,10 @@ export const GET_DM_CONTACTS_ROUTES = `${CONTACTS_ROUTE}/get-contacts-for-dm`;
 //This routes are all message related routes
 
 export const MESSAGE_ROUTE = "api/messages";
-export const USER_MESSAGE = `${MESSAGE_ROUTE}`
-export const UPLOAD_FILE_ROUTE = `${MESSAGE_ROUTE}/upload-files`
+export const USER_MESSAGE = `${MESSAGE_ROUTE}`;
+export const UPLOAD_FILE_ROUTE = `${MESSAGE_ROUTE}/upload-files`;
+
+//This route are all channel related routes
+
+export const CHANNEL_ROUTE = "api/channel";
+export const CREATE_CHANNEL_ROUTE = `${CHANNEL_ROUTE}/create`;
