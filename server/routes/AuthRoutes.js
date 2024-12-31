@@ -6,7 +6,7 @@ import { upload } from "../helpers/UploadHelper.js";
 
 const authRoutes = Router();
 
-authRoutes.post('/login', loginRequest(),login)
+authRoutes.post('/login', loginRequest(),login);
 authRoutes.post('/signup', signupRequest(), signup);
 
 authRoutes.use(varifyToken);

@@ -28,11 +28,11 @@ import MultipleSelector from "@/components/ui/multipleselect";
 function CreateChannel() {
   const { setSelectedChatType, setSelectedChatData } = useAppStore();
   const [newChannelModel, setNewChannelModel] = useState(false);
-  const [searchedContacts, setSearchedContacts] = useState([]);
+  const [searchedContacts, setSearchedContacts] = useState("");
   const [allContacts, setAllContacts] = useState([]);
   const [selectedContacts, setSelectedContacts] = useState([]);
   const [channelName, setChannelName] = useState("");
-
+  
   useEffect(() => {
     const getData = async () => {
       const response = await apiClient.get(GET_ALL_CONTACTS, {
