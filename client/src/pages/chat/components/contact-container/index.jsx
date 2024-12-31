@@ -3,14 +3,14 @@ import ProfileInfo from "./components/profile-info";
 import NewDM from "./components/new-dm";
 import { useEffect } from "react";
 import apiClient from "@/lib/api-client";
-import { GET_DM_CONTACTS_ROUTES } from "@/utils/constants";
+import { GET_DM_CONTACTS_ROUTES, GET_USER_CHANNELS } from "@/utils/constants";
 import { useAppStore } from "@/store";
 import ContactList from "@/components/custom/ContactList";
 import CreateChannel from "./components/create-channel";
 
 function ContactChatContainer() {
 
-    const {directMessageContacts, setDirectMessageContacts, channels} = useAppStore();
+    const {directMessageContacts, setDirectMessageContacts, channels, setChannels} = useAppStore();
 
     useEffect(() => {
         const getContacts = async () => {
@@ -23,7 +23,18 @@ function ContactChatContainer() {
             }
         }
 
-        getContacts()
+        const getChannels = async () => {
+            const response = await apiClient.get(GET_USER_CHANNELS, {
+                withCredentials: true
+            });
+
+            if(response.data.channels){
+                setChannels(response.data.channels)
+            }
+        }
+
+        getContacts();
+        getChannels();
 
     }, []);
 
