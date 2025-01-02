@@ -65,6 +65,14 @@ function MessageBar() {
       });
       setMessage("");
       messageRef.current.focus();
+    }else if(message && selectedChatType === "channel"){
+      socket.emit("send-channel-message", {
+        sender: userInfo.id,
+        content: message,
+        messageType: "text",
+        fileUrl: undefined,
+        channelId: selectedChatData._id
+      });
     }
   };
 
@@ -107,6 +115,16 @@ function MessageBar() {
               setMessage("");
               messageRef.current.focus();
             });
+          }else if(selectedChatType === "channel"){
+            socket.emit("send-channel-message", {
+              sender: userInfo.id,
+              content: undefined,
+              messageType: "file",
+              fileUrl: filePath.path,
+              channelId: selectedChatData._id
+            });
+            setMessage("");
+            messageRef.current.focus();
           }
         }
       }

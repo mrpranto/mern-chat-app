@@ -1,5 +1,7 @@
 import { Server as SocketIoServer } from "socket.io";
 import Message from "./models/Messages.model.js";
+import Channel from "./models/Channel.model.js";
+import { now } from "mongoose";
 
 const setupSocket = (server) => {
     const io = new SocketIoServer(server, {
@@ -41,6 +43,41 @@ const setupSocket = (server) => {
         
     };
 
+    const sendChannelMessage = async (message) => {
+        const {channelId, sender, content, fileUrl}  = message;
+        const createMessage = await Message.create({
+            sender,
+            recipient: null,
+            content,
+            timestamp: new Date(),
+            fileUrl
+        })
+
+        const messageData = await Message.findById(createMessage._id)
+                .populate("sender", "id email firstName lastName image color")
+                .exec();
+
+        await Channel.findByIdAndUpdate(channelId, {
+            $push: {messages: createMessage._id},
+        })
+
+        const channel = await Channel.findById(channelId).populate("members");
+        const findData = {...messageData._doc, channelId: channel._id};
+
+        if(channel && channel.members){
+            channel.members.forEach((member) => {
+                const memberSocketId = userSocketMap.get(member._id.toString());
+                if(memberSocketId){
+                    io.io(memberSocketId).emit("recieve-channel-message", findData);
+                }
+                const adminSocketId = userSocketMap.get(channel.admin._id.toString());
+                if(adminSocketId){
+                    io.io(adminSocketId).emit("recieve-channel-message", findData);
+                }
+            });
+        }
+    }
+
     io.on("connection", (socket) => {
         const userId = socket.handshake.query.userId;
         if(userId){
@@ -51,6 +88,7 @@ const setupSocket = (server) => {
         }
 
         socket.on("sendMessage", sendMessage);
+        socket.on("send-channel-message", sendChannelMessage);
         socket.on("disconnect", () => disconnect(socket));
     })
 
