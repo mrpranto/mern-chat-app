@@ -73,6 +73,8 @@ function MessageBar() {
         fileUrl: undefined,
         channelId: selectedChatData._id
       });
+      setMessage("");
+      messageRef.current.focus();
     }
   };
 
