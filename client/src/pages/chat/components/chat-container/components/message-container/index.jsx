@@ -1,6 +1,6 @@
 import apiClient from "@/lib/api-client";
 import { useAppStore } from "@/store";
-import { HOST, USER_MESSAGE } from "@/utils/constants";
+import { GET_CHANNEL_MESSAGES, HOST, USER_MESSAGE } from "@/utils/constants";
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import { MdFolderZip } from "react-icons/md";
@@ -38,9 +38,25 @@ function MessageContainer() {
       }
     };
 
+    const getChannelMessages = async () => {
+      try {
+        const response = await apiClient.get(
+          `${GET_CHANNEL_MESSAGES}/${selectedChatData._id}`,
+          { withCredentials: true }
+        );
+        if (response.data.messages) {
+          setSelectedChatMessages(response.data.messages);
+        }
+      } catch (err) {
+        console.log({ err });
+      }
+    };
+
     if (selectedChatData._id) {
       if (selectedChatType === "contact") {
         getMessages();
+      }else if(selectedChatType === "channel"){
+        getChannelMessages();
       }
     }
   }, [selectedChatData, selectedChatType, setSelectedChatMessages]);

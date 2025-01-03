@@ -1,5 +1,7 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import User from "../models/User.model.js";
+import Channel from "../models/Channel.model.js";
+import mongoose from "mongoose";
 
 export const channelCreatedRequest = () => {
   return [
@@ -26,6 +28,21 @@ export const channelCreatedRequest = () => {
             return true;
           })
         }
+      }),
+  ];
+};
+
+export const channelMessageRequest = () => {
+  return [
+
+    param("channelId")
+      .notEmpty()
+      .withMessage("The channel id field is required.")
+      .custom(async (value) => {
+        if(!mongoose.Types.ObjectId.isValid(value)){
+          throw new Error("The channel id is not valid.");
+        }
+        return true;
       }),
   ];
 };
