@@ -97,8 +97,6 @@ function MessageBar() {
           onUploadProgress: progressEvent => {
             const {loaded, total} = progressEvent;
             const percentCompleted = Math.round((loaded*100)/total);
-            console.log(percentCompleted);
-            
             setFileUploadProgress(percentCompleted);
           },
         });
@@ -118,12 +116,14 @@ function MessageBar() {
               messageRef.current.focus();
             });
           }else if(selectedChatType === "channel"){
-            socket.emit("send-channel-message", {
-              sender: userInfo.id,
-              content: undefined,
-              messageType: "file",
-              fileUrl: filePath.path,
-              channelId: selectedChatData._id
+            response.data.filePathData.forEach((filePath) => {
+              socket.emit("send-channel-message", {
+                sender: userInfo.id,
+                content: undefined,
+                messageType: "file",
+                fileUrl: filePath.path,
+                channelId: selectedChatData._id
+              });
             });
             setMessage("");
             messageRef.current.focus();
