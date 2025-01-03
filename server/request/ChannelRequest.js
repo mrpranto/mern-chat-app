@@ -19,7 +19,7 @@ export const channelCreatedRequest = () => {
       .isArray()
       .withMessage("The member field is must be array.")
       .custom(async (value) => {
-        if(value && Array.isArray(value)){
+        if(value && Array.isArray(value) && value.length){
           value.map(async (member) => {
             const existingUser = await User.findById(member);
             if (!existingUser) {
@@ -27,6 +27,8 @@ export const channelCreatedRequest = () => {
             }
             return true;
           })
+        }else{
+          throw new Error("The member id must not be empty.");
         }
       }),
   ];
