@@ -13,8 +13,8 @@ import { toast } from "sonner";
 
 function Auth() {
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("pranto@gmail.com");
+    const [password, setPassword] = useState("11223344");
     const [confirmPassword, setconfirmPassword] = useState("");
     const {userInfo, setUserInfo} = useAppStore();
     const navigate = useNavigate();
